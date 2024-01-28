@@ -23,14 +23,10 @@ namespace DAL.Service
 
             if (admin != null)
             {
-                //var passwordHasher = new PasswordHasher<Admin>();
-                //var result = passwordHasher.VerifyHashedPassword(admin, admin.Password, password);
-
-                //if (result == PasswordVerificationResult.Success)
-                //{
-                //    return true; // Username and password are correct
-                //}
-                return true;
+                if(admin.Password == password)
+                {
+                    return true;
+                }
             }
 
             return false; // Invalid username or password
@@ -42,14 +38,10 @@ namespace DAL.Service
 
             if (cutomer != null)
             {
-                //var passwordHasher = new PasswordHasher<Customer>();
-                //var result = passwordHasher.VerifyHashedPassword(cutomer, cutomer.Password, password);
-
-                //if (result == PasswordVerificationResult.Success)
-                //{
-                //    return true; // Username and password are correct
-                //}
-                return true;
+                if(cutomer.Password == password)
+                {
+                    return true;
+                }
             }
 
             return false; // Invalid username or password

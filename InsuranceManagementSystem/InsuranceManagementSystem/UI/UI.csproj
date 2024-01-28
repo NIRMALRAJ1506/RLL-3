@@ -166,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Admin.jpeg" />
+    <Content Include="Content\background.jpeg" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -183,7 +184,6 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Customer.jpeg" />
-    <Content Include="Content\Homepage.jpg" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
