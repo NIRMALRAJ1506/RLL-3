@@ -1,64 +1,74 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
-//using Microsoft.AspNetCore.Identity;
-
-using DAL.Service;
 using DAL;
-
-using UI.Models;
-using DAL.Data;
 using DAL.Repository;
-
+using DAL.Service;
+using UI.Models;
 
 namespace UILayer.Controllers
 {
     public class ValidationController : Controller
-
     {
         private readonly IAdminRepository adminRepository;
         private readonly ICustomerRepository customerRepository;
+        private readonly InsuranceDbContext context;
 
         public ValidationController(IAdminRepository adminRepository, ICustomerRepository customerRepository)
         {
             this.adminRepository = adminRepository;
             this.customerRepository = customerRepository;
-        }
-        private readonly InsuranceDbContext context;
-
-        public ValidationController()
-        {
             this.context = new InsuranceDbContext();
         }
-
 
         // GET: Validation
         public ActionResult Index()
         {
             return View();
         }
+
         public ActionResult Registration()
         {
-            return View();
+            // Generate and store captcha value in session
+            var captchaValue = GenerateAlphanumericCaptcha();
+            Session["Captcha"] = captchaValue;
+
+            // Pass captcha value to the view
+            var user = new UserView();
+            user.CaptchaValue = captchaValue;
+            return View(user);
         }
+
         [HttpPost]
-        public ActionResult Registration(UserView user)
+        public ActionResult Registration(UserView user, string captchaInput)
         {
+            // Validate captcha
+            if (!ValidateCaptcha(captchaInput))
+            {
+                ModelState.AddModelError("Captcha", "Captcha verification failed.");
+                return View("Registration", user);
+            }
+
+            // Check if email or username already registered
             if (adminRepository.AdminExistsEmail(user.Email) || customerRepository.CustomerExistsEmail(user.Email))
             {
-                // Email already registered
                 ModelState.AddModelError("Email", "Email already registered with us.");
                 return View("Registration", user);
             }
             else if (adminRepository.AdminExists(user.UserName) || customerRepository.CustomerExists(user.UserName))
             {
-                // Username already registered
                 ModelState.AddModelError("UserName", "Username already registered with us.");
-
                 return View("Registration", user);
             }
+
+            // Registration logic
             if (user.UserType == 2)
             {
+                // Customer registration
                 Customer customer = new Customer
                 {
                     Email = user.Email,
@@ -68,16 +78,15 @@ namespace UILayer.Controllers
                     PhoneNumber = user.PhoneNumber,
                     RoleId = user.UserType,
                     Password = user.Password,
-
                 };
 
                 customerRepository.CreateCustomer(customer);
-
 
                 return RedirectToAction("CustomerLogin", "Validation");
             }
             else
             {
+                // Admin registration
                 Admin newadmin = new Admin
                 {
                     Email = user.Email,
@@ -94,18 +103,26 @@ namespace UILayer.Controllers
                 return RedirectToAction("Index", "Admin");
             }
         }
-        // GET: Account
-        public ActionResult CustomerLogin()
+
+        public ActionResult GenerateCaptchaImage()
         {
+            var captchaValue = GenerateAlphanumericCaptcha();
 
+            // Store captcha value in session
+            Session["Captcha"] = captchaValue;
 
-            return View();
+            // Create an image of the captcha
+            var captchaImage = CaptchaHelper.GenerateCaptchaImage(captchaValue);
+
+            // Convert the image to a byte array and return it as an image response
+            var imageBytes = CaptchaHelper.ImageToByteArray(captchaImage);
+
+            return File(imageBytes, "image/png");
         }
 
-        public ActionResult AdminLogin()
+        [HttpGet]
+        public ActionResult CustomerLogin()
         {
-
-
             return View();
         }
 
@@ -113,36 +130,25 @@ namespace UILayer.Controllers
         public ActionResult AdminLogin(LoginView loginView)
         {
             var isAdmin = Authentication.VerifyAdminCredentials(loginView.UserName, loginView.Password);
-            //var isAdmin = AuthenticateAdmin(loginView.UserName, loginView.Password);
 
             if (isAdmin)
             {
                 FormsAuthentication.SetAuthCookie(loginView.UserName, false);
                 return RedirectToAction("Dashboard", "Admin");
-
             }
             else
             {
-                // If authentication fails, you may want to show an error message.
                 ModelState.AddModelError(string.Empty, "Invalid username or password");
                 return View(loginView);
             }
         }
-        //private bool AuthenticateAdmin(string username, string password)
-        //{
 
-        //    //var admin = context.Admins.SingleOrDefault(a => a.UserName == username && a.Password == password);
-
-
-        //    // Return true if an admin is found, otherwise false.
-        //    return admin != null;
-        //}
         [HttpPost]
         public ActionResult CustomerLogin(LoginView loginView)
         {
-            var isAdmin = Authentication.VerifyCustomerCredentials(loginView.UserName, loginView.Password);
-            /*ar isAdmin = AuthenticateAdmin(loginView.UserName, loginView.Password);*/
-            if (isAdmin)
+            var isCustomer = Authentication.VerifyCustomerCredentials(loginView.UserName, loginView.Password);
+
+            if (isCustomer)
             {
                 var user = customerRepository.GetCustomerByUserName(loginView.UserName);
                 Session["UserId"] = user.Id;
@@ -152,20 +158,17 @@ namespace UILayer.Controllers
             }
             else
             {
-                // If authentication fails, you may want to show an error message.
                 ModelState.AddModelError(string.Empty, "Invalid username or password");
                 return View(loginView);
             }
         }
-
-
-
 
         [HttpGet]
         public ActionResult ResetPassword()
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CustomerResetPassword(ResetPasswordViewModel model)
@@ -220,9 +223,6 @@ namespace UILayer.Controllers
             return View(model);
         }
 
-
-
-
         public ActionResult Logout()
         {
             // Add any logout logic here, such as clearing session or authentication data
@@ -236,5 +236,17 @@ namespace UILayer.Controllers
             return RedirectToAction("Index", "Home"); // Adjust "Index" and "Home" based on your actual home page route
         }
 
+        private string GenerateAlphanumericCaptcha()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, 5).Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        private bool ValidateCaptcha(string userInput)
+        {
+            var captchaInSession = Session["Captcha"] as string;
+            return !string.IsNullOrEmpty(captchaInSession) && userInput.Trim().Equals(captchaInSession, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

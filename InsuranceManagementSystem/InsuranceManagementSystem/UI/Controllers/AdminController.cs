@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace UI.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private InsuranceDbContext dbContext;

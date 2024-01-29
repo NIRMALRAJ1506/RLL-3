@@ -49,5 +49,6 @@ namespace UI.Models
 
         [Required(ErrorMessage = "Please select a user type.")]
         public int UserType { get; set; }
+        public string CaptchaValue { get; set; }
     }
 }
