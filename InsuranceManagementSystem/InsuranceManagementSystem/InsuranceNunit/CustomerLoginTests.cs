@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlClient;
 using NUnit.Framework;
@@ -9,43 +10,43 @@ using UI.Models;
 namespace InsuranceNunit
 {
     [TestFixture]
-    public class LoginViewTests
+    public class CustomerLoginTests
     {
         [Test]
         public void UserName_Required()
         {
             // Arrange
-            var loginView = new LoginView { Password = "TestPassword" };
+            var customerView = new CustomerView { Password = "Ajaykumar@1" };
 
             // Act & Assert
-            Assert.Throws<ValidationException>(() => ValidateModel(loginView));
+            Assert.Throws<ValidationException>(() => ValidateModel(customerView));
         }
 
         [Test]
         public void Password_Required()
         {
             // Arrange
-            var loginView = new LoginView { UserName = "TestUser" };
+            var customerView = new CustomerView { UserName = "Ajay15" };
 
             // Act & Assert
-            Assert.Throws<ValidationException>(() => ValidateModel(loginView));
+            Assert.Throws<ValidationException>(() => ValidateModel(customerView));
         }
 
         [Test]
         public void Valid_Model_Correct_Credentials()
         {
             // Arrange
-            var loginView = new LoginView { UserName = "nirmal15", Password = "nirmal@15" };
+            var customerView = new CustomerView { UserName = "Ajay15", Password = "Ajaykumar@1" };
 
             // Act & Assert
-            Assert.DoesNotThrow(() => ValidateModel(loginView));
+            Assert.DoesNotThrow(() => ValidateModel(customerView));
         }
 
-        private void ValidateModel(LoginView model)
+        private void ValidateModel(CustomerView model)
         {
-            // Perform model validation using DataAnnotations
+            // Perform model validation using DataAnnotations for UserName and Password
             var validationContext = new ValidationContext(model, null, null);
-            var validationResults = ValidateModel(model, validationContext);
+            var validationResults = ValidateModelForUserNameAndPassword(model, validationContext);
 
             if (validationResults.Length > 0)
             {
@@ -54,17 +55,25 @@ namespace InsuranceNunit
             }
 
             // Now check the credentials against the database using your data access logic
-            if (!AdminExistsInDatabase(model))
+            if (!CustomerExistsInDatabase(model))
             {
-                throw new ValidationException("Admin does not exist in the database");
+                throw new ValidationException("Customer does not exist in the database");
             }
         }
 
-        private ValidationResult[] ValidateModel(object model, ValidationContext validationContext)
+        private ValidationResult[] ValidateModelForUserNameAndPassword(object model, ValidationContext validationContext)
         {
-            // Helper method for model validation
+            // Helper method for model validation, checking only UserName and Password
             var validationResults = new List<ValidationResult>();
+            var propertiesToCheck = new[] { "UserName", "Password" };
+
             Validator.TryValidateObject(model, validationContext, validationResults, true);
+
+            // Filter validation results to include only UserName and Password errors
+            validationResults = validationResults
+                .Where(result => propertiesToCheck.Contains(result.MemberNames.FirstOrDefault()))
+                .ToList();
+
             return validationResults.ToArray();
         }
 
@@ -74,7 +83,8 @@ namespace InsuranceNunit
             var messages = validationResults.Select(result => result.ErrorMessage);
             return string.Join(Environment.NewLine, messages);
         }
-        private bool AdminExistsInDatabase(LoginView model)
+
+        private bool CustomerExistsInDatabase(CustomerView model)
         {
             // Replace "YourConnectionString" with the actual connection string to your database
             var connectionString = "data source=DESKTOP-Q04HI42\\SQLEXPRESS;initial catalog=InsuranceDatabase;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework\" providerName=\"System.Data.SqlClient";
@@ -83,8 +93,8 @@ namespace InsuranceNunit
             {
                 connection.Open();
 
-                // Check if there is an Admin with the specified credentials in the database
-                using (var command = new SqlCommand($"SELECT COUNT(*) FROM Admins WHERE UserName = '{model.UserName}' AND Password = '{model.Password}'", connection))
+                // Check if there is a Customer with the specified credentials in the database
+                using (var command = new SqlCommand($"SELECT COUNT(*) FROM Customers WHERE UserName = '{model.UserName}' AND Password = '{model.Password}'", connection))
                 {
                     return (int)command.ExecuteScalar() > 0;
                 }
