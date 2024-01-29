@@ -246,3 +246,7 @@ C:\Mphasis\RLL 3\InsuranceManagementSystem\InsuranceManagementSystem\UI\obj\Debu
 C:\Mphasis\RLL 3\InsuranceManagementSystem\InsuranceManagementSystem\UI\obj\Debug\UI.csproj.CopyComplete
 C:\Mphasis\RLL 3\InsuranceManagementSystem\InsuranceManagementSystem\UI\obj\Debug\UI.dll
 C:\Mphasis\RLL 3\InsuranceManagementSystem\InsuranceManagementSystem\UI\obj\Debug\UI.pdb
+C:\Mphasis\RLL 3\InsuranceManagementSystem\InsuranceManagementSystem\UI\bin\Microsoft.AspNet.Identity.Core.dll
+C:\Mphasis\RLL 3\InsuranceManagementSystem\InsuranceManagementSystem\UI\bin\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Mphasis\RLL 3\InsuranceManagementSystem\InsuranceManagementSystem\UI\bin\Microsoft.AspNet.Identity.Core.xml
+C:\Mphasis\RLL 3\InsuranceManagementSystem\InsuranceManagementSystem\UI\bin\Microsoft.AspNet.Identity.EntityFramework.xml

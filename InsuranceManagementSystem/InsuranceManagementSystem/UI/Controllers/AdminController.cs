@@ -7,7 +7,7 @@ using System.Web.Mvc;
 
 namespace UI.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    
     public class AdminController : Controller
     {
         private InsuranceDbContext dbContext;
@@ -18,130 +18,249 @@ namespace UI.Controllers
         // GET: Admin
         public ActionResult Dashboard()
         {
-            return View();
+            if (Session["UserId"] != null)
+            {
+                // User is authenticated, proceed with the action
+                return View();
+            }
+            else
+            {
+                // User is not authenticated, redirect to login or unauthorized page
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
+
 
         public ActionResult GetAllCustomers()
         {
-            var customers = dbContext.Customers.ToList();
-            return View(customers);
+            if (Session["UserId"] != null)
+            {
+                // User is authenticated, proceed with the action
+                var customers = dbContext.Customers.ToList();
+                return View(customers);
+            }
+            else
+            {
+                // User is not authenticated, redirect to login or unauthorized page
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
 
         //Action method to get all users
         public ActionResult GetAllUsers()
         {
-            var users = dbContext.Customers.ToList(); //assuming users are stored in the same tables as customers
-            return View(users);
+            if (Session["UserId"] != null)
+            {
+                // User is authenticated, proceed with the action
+                var users = dbContext.Customers.ToList();
+                return View(users);
+            }
+            else
+            {
+                // User is not authenticated, redirect to login or unauthorized page
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
+
 
         public ActionResult PoliciesList()
         {
-            var policies = dbContext.Policies.ToList();
-            return View(policies);
+            if (Session["UserId"] != null)
+            {
+                // User is authenticated, proceed with the action
+                var policies = dbContext.Policies.ToList();
+                return View(policies);
+            }
+            else
+            {
+                // User is not authenticated, redirect to login or unauthorized page
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
 
         public ActionResult Categories()
         {
-            var categories = dbContext.Categories.ToList();
-            return View(categories);
+            if (Session["UserId"] != null)
+            {
+                // User is authenticated, proceed with the action
+                var categories = dbContext.Categories.ToList();
+                return View(categories);
+            }
+            else
+            {
+                // User is not authenticated, redirect to login or unauthorized page
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
 
         public ActionResult AllAppliedPolicies()
         {
-            var appliedPolicies = dbContext.AppliedPolicies.ToList();
-            return View(appliedPolicies);
+            if (Session["UserId"] != null)
+            {
+                // User is authenticated, proceed with the action
+                var appliedPolicies = dbContext.AppliedPolicies.ToList();
+                return View(appliedPolicies);
+            }
+            else
+            {
+                // User is not authenticated, redirect to login or unauthorized page
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
+
 
 
         [HttpPost]
         public ActionResult ApprovePolicy(int policyId)
         {
-            var policy = dbContext.AppliedPolicies.Find(policyId);
-            if(policy!=null && policy.StatusCode == PolicyStatus.Pending)
+            if (Session["UserId"] != null)
             {
-                policy.StatusCode = PolicyStatus.Approved;
-                dbContext.SaveChanges();
+                var policy = dbContext.AppliedPolicies.Find(policyId);
+                if (policy != null && policy.StatusCode == PolicyStatus.Pending)
+                {
+                    policy.StatusCode = PolicyStatus.Approved;
+                    dbContext.SaveChanges();
+                }
+                return RedirectToAction("AllAppliedPolicies");
             }
-            return RedirectToAction("AllAppliedPolicies");
+            else
+            {
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
 
+        [HttpPost]
         public ActionResult DisapprovePolicy(int policyId)
         {
-            var policy = dbContext.AppliedPolicies.Find(policyId);
-            if(policy!=null && policy.StatusCode == PolicyStatus.Pending)
+            if (Session["UserId"] != null)
             {
-                policy.StatusCode = PolicyStatus.Disapproved;
-                dbContext.SaveChanges();
+                var policy = dbContext.AppliedPolicies.Find(policyId);
+                if (policy != null && policy.StatusCode == PolicyStatus.Pending)
+                {
+                    policy.StatusCode = PolicyStatus.Disapproved;
+                    dbContext.SaveChanges();
+                }
+                return RedirectToAction("AllAppliedPolicies");
             }
-            return RedirectToAction("AllAppliedPolicies");
+            else
+            {
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
 
         public ActionResult ApprovedPolicies()
         {
-            var approvedPolicies = dbContext.AppliedPolicies.Where(p => p.StatusCode == PolicyStatus.Approved).ToList();
-            return View(approvedPolicies);
+            if (Session["UserId"] != null)
+            {
+                var approvedPolicies = dbContext.AppliedPolicies.Where(p => p.StatusCode == PolicyStatus.Approved).ToList();
+                return View(approvedPolicies);
+            }
+            else
+            {
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
 
         public ActionResult DisapprovedPolicies()
         {
-            var disapprovedPolicies = dbContext.AppliedPolicies.Where(p => p.StatusCode == PolicyStatus.Disapproved).ToList();
-            return View(disapprovedPolicies);
+            if (Session["UserId"] != null)
+            {
+                var disapprovedPolicies = dbContext.AppliedPolicies.Where(p => p.StatusCode == PolicyStatus.Disapproved).ToList();
+                return View(disapprovedPolicies);
+            }
+            else
+            {
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
 
         public ActionResult PendingPolicies()
         {
-            var pendingPolicies = dbContext.AppliedPolicies.Where(p => p.StatusCode == PolicyStatus.Pending).ToList();
-            return View(pendingPolicies);
+            if (Session["UserId"] != null)
+            {
+                var pendingPolicies = dbContext.AppliedPolicies.Where(p => p.StatusCode == PolicyStatus.Pending).ToList();
+                return View(pendingPolicies);
+            }
+            else
+            {
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
 
         public ActionResult Policy()
         {
-            return View();
+            if (Session["UserId"] != null)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
 
         //YourController.cs
 
         public ActionResult Question()
         {
-            var questions = dbContext.Questions.ToList();
-            return View(questions); 
+            if (Session["UserId"] != null)
+            {
+                var questions = dbContext.Questions.ToList();
+                return View(questions);
+            }
+            else
+            {
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
 
-        public ActionResult Reply(int id) 
+        public ActionResult Reply(int id)
         {
-            var question = dbContext.Questions.Find(id);
-            return View(question);
+            if (Session["UserId"] != null)
+            {
+                var question = dbContext.Questions.Find(id);
+                return View(question);
+            }
+            else
+            {
+                return RedirectToAction("AdminLogin", "Validation");
+            }
         }
 
         [HttpPost]
         public ActionResult Reply(Questions model)
         {
-            if(ModelState.IsValid)
+            if (Session["UserId"] != null && ModelState.IsValid)
             {
                 var existingQuestion = dbContext.Questions.Find(model.QuestionId);
-                if(existingQuestion != null)
+                if (existingQuestion != null)
                 {
                     existingQuestion.Answer = model.Answer;
                     dbContext.SaveChanges();
                     return RedirectToAction("Index");
                 }
             }
-            //if ModelState is not valid or if the question doesn't exist, return to the reply view
+
             return View(model);
         }
 
         [HttpPost]
         public ActionResult SaveAnswer(int questionId, string answer)
         {
-            var existingQuestion = dbContext.Questions.Find(questionId);
-            if(existingQuestion != null)
+            if (Session["UserId"] != null)
             {
-                existingQuestion.Answer = answer;
-                dbContext.SaveChanges();
-                return Json(new { success = true });
+                var existingQuestion = dbContext.Questions.Find(questionId);
+                if (existingQuestion != null)
+                {
+                    existingQuestion.Answer = answer;
+                    dbContext.SaveChanges();
+                    return Json(new { success = true });
+                }
             }
+
             return Json(new { success = false, error = "Question not found" });
         }
+
 
     }
 }

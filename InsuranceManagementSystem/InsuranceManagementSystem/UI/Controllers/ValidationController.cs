@@ -120,11 +120,19 @@ namespace UILayer.Controllers
             return File(imageBytes, "image/png");
         }
 
-        [HttpGet]
+        
         public ActionResult CustomerLogin()
         {
             return View();
         }
+       
+        public ActionResult AdminLogin()
+        {
+
+
+            return View();
+        }
+
 
         [HttpPost]
         public ActionResult AdminLogin(LoginView loginView)
@@ -133,7 +141,7 @@ namespace UILayer.Controllers
 
             if (isAdmin)
             {
-                FormsAuthentication.SetAuthCookie(loginView.UserName, false);
+                Session["UserId"] = loginView.UserName; // Store user identifier in session
                 return RedirectToAction("Dashboard", "Admin");
             }
             else
@@ -142,6 +150,7 @@ namespace UILayer.Controllers
                 return View(loginView);
             }
         }
+
 
         [HttpPost]
         public ActionResult CustomerLogin(LoginView loginView)
@@ -226,6 +235,8 @@ namespace UILayer.Controllers
         public ActionResult Logout()
         {
             // Add any logout logic here, such as clearing session or authentication data
+            Session.Clear(); // Clear all session variables
+            Session.Abandon(); // Abandon the session
 
             // Set cache control headers to prevent caching
             Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);

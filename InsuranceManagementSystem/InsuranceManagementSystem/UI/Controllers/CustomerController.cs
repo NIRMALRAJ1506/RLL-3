@@ -16,7 +16,17 @@ namespace UI.Controllers
         {
             dbContext = new InsuranceDbContext(); 
         }
-      
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            base.OnActionExecuting(filterContext);
+
+            // Check if UserId is present in the session, otherwise redirect to login
+            if (Session["UserId"] == null)
+            {
+                filterContext.Result = RedirectToAction("CustomerLogin", "Validation");
+            }
+        }
+
         public ActionResult Dashboard()  
         {
             return View();  
