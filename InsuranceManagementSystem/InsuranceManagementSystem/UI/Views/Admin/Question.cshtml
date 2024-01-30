@@ -4,16 +4,19 @@
 }
 
 <style>
+    body{
+        background-color:lightgray;
+    }
     .replied {
         color: green;
     }
 
     h2 {
-        color: #007bff;
+        color: black;
     }
 
     thead th {
-        background-color: #007bff;
+        background-color: #343a40;
         color: #000;
         font-weight: bold;
     }
@@ -33,7 +36,7 @@
     }
 
     th {
-        background-color: #007bff;
+        background-color: #343a40;
         color: #fff;
     }
 
@@ -73,6 +76,9 @@
         .btn-primary:hover {
             background-color: lightblue;
         }
+    td {
+        background-color: #8faebd;
+    }
 </style>
 
 <h2>Questions</h2>
@@ -80,20 +86,20 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Question</th>
-            <th>Date</th>
-            <th>Customer ID</th>
-            <th>Actions</th>
+            <th style="background-color: #343a40;">Question</th>
+            <th style="background-color: #343a40;">Date</th>
+            <th style="background-color: #343a40;">Customer ID</th>
+            <th style="background-color: #343a40;">Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var question in Model)
         {
             <tr>
-                <td>@question.Question</td>
-                <td>@question.Date.ToString("yyyy-MM-dd")</td>
-                <td>@question.CustomerId</td>
-                <td>
+                <td style="background-color: #8faebd;">@question.Question</td>
+                <td style="background-color: #8faebd;">@question.Date.ToString("yyyy-MM-dd")</td>
+                <td style="background-color: #8faebd;">@question.CustomerId</td>
+                <td style="background-color: #8faebd;">
                     @if (!string.IsNullOrEmpty(question.Answer))
                     {
                         <span class="replied">Replied</span>

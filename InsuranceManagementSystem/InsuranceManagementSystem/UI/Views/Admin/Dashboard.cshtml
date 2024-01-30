@@ -24,15 +24,20 @@
         outline: none;
     }
 
-    .card{
-        margin: 2px;
-        padding:1px;
-        border: none;
-        background-color: darkslateblue;
+    .card {
+        width: 450px;
+        background-color: lightgray;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease-in-out;
+        margin-bottom: 20px;
     }
+        .card:hover {
+            transform: scale(1.05);
+        }
 
     .card-title{
-        color:white;
+        color:black;
     }
 
     </style>
@@ -41,7 +46,7 @@
    <div class="content">
     <div class="row">
         <div class="col-md-6">
-            <a href="@Url.Action("GetAllCustomers", "Customer")">
+            <a href="@Url.Action("GetAllCustomers", "Admin")">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Total registered User </h5>

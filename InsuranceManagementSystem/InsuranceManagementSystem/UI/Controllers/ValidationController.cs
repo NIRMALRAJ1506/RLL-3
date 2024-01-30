@@ -141,7 +141,7 @@ namespace UILayer.Controllers
 
             if (isAdmin)
             {
-                Session["UserId"] = loginView.UserName; // Store user identifier in session
+                Session["AdminUserId"] = loginView.UserName; // Store user identifier in session
                 return RedirectToAction("Dashboard", "Admin");
             }
             else
@@ -160,8 +160,8 @@ namespace UILayer.Controllers
             if (isCustomer)
             {
                 var user = customerRepository.GetCustomerByUserName(loginView.UserName);
-                Session["UserId"] = user.Id;
-                Session["UserName"] = user.UserName;
+                Session["CustomerUserId"] = user.Id;
+                Session["CustomerUserName"] = user.UserName;
                 FormsAuthentication.SetAuthCookie(loginView.UserName, false);
                 return RedirectToAction("Dashboard", "Customer");
             }
@@ -235,7 +235,16 @@ namespace UILayer.Controllers
         public ActionResult Logout()
         {
             // Add any logout logic here, such as clearing session or authentication data
-            Session.Clear(); // Clear all session variables
+            if (Session["AdminUserId"] != null)
+            {
+                Session.Remove("AdminUserId"); // Clear admin session variable
+            }
+            else if (Session["CustomerUserId"] != null)
+            {
+                Session.Remove("CustomerUserId"); // Clear customer session variable
+                Session.Remove("CustomerUserName"); // Clear other customer session variables if needed
+            }
+
             Session.Abandon(); // Abandon the session
 
             // Set cache control headers to prevent caching
@@ -246,6 +255,7 @@ namespace UILayer.Controllers
             // Redirect to the home page
             return RedirectToAction("Index", "Home"); // Adjust "Index" and "Home" based on your actual home page route
         }
+
 
         private string GenerateAlphanumericCaptcha()
         {

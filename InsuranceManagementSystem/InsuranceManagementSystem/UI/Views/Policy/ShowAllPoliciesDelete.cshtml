@@ -5,6 +5,12 @@
 }
 
 <style>
+    body{
+        background-color:lightgray
+    }
+    h2{
+        color:black;
+    }
     table {
         width: 100%;
         border-collapse: collapse;
@@ -18,12 +24,12 @@
     }
 
     th {
-        background-color: #3498db; /* Blue color for heading */
-        color: #fff; /* White text for heading */
+        background-color: #343a40;
+        color: #fff; 
     }
 
     td {
-        background-color: #fff;
+        background-color: #8faebd;
     }
 
     .delete-link {
@@ -42,23 +48,23 @@
         }
 </style>
 
-<h2 style="background-color: #3498db; color: #fff; padding: 10px;">All Policies</h2>
+<h2>All Policies</h2>
 
 <table class="table">
     <tr class="heading-row">
-        <th style="background-color: #3498db;">Policy Number</th>
-        <th style="background-color: #3498db;">Applied Date</th>
-        <th style="background-color: #3498db;">Category</th>
-        <th style="background-color: #3498db;">Action</th>
+        <th style="background-color: #343a40;">Policy Number</th>
+        <th style="background-color: #343a40;">Applied Date</th>
+        <th style="background-color: #343a40;">Category</th>
+        <th style="background-color: #343a40;">Action</th>
     </tr>
 
     @foreach (var policy in Model)
     {
         <tr>
-            <td>@policy.PolicyNumber</td>
-            <td>@policy.AppliedDate.ToString("yyyy-MM-dd")</td>
-            <td>@policy.Category</td>
-            <td>
+            <td style="background-color: #8faebd;">@policy.PolicyNumber</td>
+            <td style="background-color: #8faebd;">@policy.AppliedDate.ToString("yyyy-MM-dd")</td>
+            <td style="background-color: #8faebd;">@policy.Category</td>
+            <td style="background-color: #8faebd;">
                 @Html.ActionLink("Delete", "DeletePolicy", "Policy", new { policyNumber = policy.PolicyNumber }, new { @class = "delete-link" })
             </td>
         </tr>

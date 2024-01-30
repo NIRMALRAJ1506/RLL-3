@@ -18,7 +18,7 @@ namespace UI.Controllers
         // GET: Admin
         public ActionResult Dashboard()
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 // User is authenticated, proceed with the action
                 return View();
@@ -33,7 +33,7 @@ namespace UI.Controllers
 
         public ActionResult GetAllCustomers()
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 // User is authenticated, proceed with the action
                 var customers = dbContext.Customers.ToList();
@@ -49,7 +49,7 @@ namespace UI.Controllers
         //Action method to get all users
         public ActionResult GetAllUsers()
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 // User is authenticated, proceed with the action
                 var users = dbContext.Customers.ToList();
@@ -65,7 +65,7 @@ namespace UI.Controllers
 
         public ActionResult PoliciesList()
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 // User is authenticated, proceed with the action
                 var policies = dbContext.Policies.ToList();
@@ -80,7 +80,7 @@ namespace UI.Controllers
 
         public ActionResult Categories()
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 // User is authenticated, proceed with the action
                 var categories = dbContext.Categories.ToList();
@@ -95,7 +95,7 @@ namespace UI.Controllers
 
         public ActionResult AllAppliedPolicies()
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 // User is authenticated, proceed with the action
                 var appliedPolicies = dbContext.AppliedPolicies.ToList();
@@ -113,7 +113,7 @@ namespace UI.Controllers
         [HttpPost]
         public ActionResult ApprovePolicy(int policyId)
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 var policy = dbContext.AppliedPolicies.Find(policyId);
                 if (policy != null && policy.StatusCode == PolicyStatus.Pending)
@@ -132,7 +132,7 @@ namespace UI.Controllers
         [HttpPost]
         public ActionResult DisapprovePolicy(int policyId)
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 var policy = dbContext.AppliedPolicies.Find(policyId);
                 if (policy != null && policy.StatusCode == PolicyStatus.Pending)
@@ -150,7 +150,7 @@ namespace UI.Controllers
 
         public ActionResult ApprovedPolicies()
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 var approvedPolicies = dbContext.AppliedPolicies.Where(p => p.StatusCode == PolicyStatus.Approved).ToList();
                 return View(approvedPolicies);
@@ -163,7 +163,7 @@ namespace UI.Controllers
 
         public ActionResult DisapprovedPolicies()
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 var disapprovedPolicies = dbContext.AppliedPolicies.Where(p => p.StatusCode == PolicyStatus.Disapproved).ToList();
                 return View(disapprovedPolicies);
@@ -176,7 +176,7 @@ namespace UI.Controllers
 
         public ActionResult PendingPolicies()
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 var pendingPolicies = dbContext.AppliedPolicies.Where(p => p.StatusCode == PolicyStatus.Pending).ToList();
                 return View(pendingPolicies);
@@ -189,7 +189,7 @@ namespace UI.Controllers
 
         public ActionResult Policy()
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 return View();
             }
@@ -203,7 +203,7 @@ namespace UI.Controllers
 
         public ActionResult Question()
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 var questions = dbContext.Questions.ToList();
                 return View(questions);
@@ -216,7 +216,7 @@ namespace UI.Controllers
 
         public ActionResult Reply(int id)
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 var question = dbContext.Questions.Find(id);
                 return View(question);
@@ -230,7 +230,7 @@ namespace UI.Controllers
         [HttpPost]
         public ActionResult Reply(Questions model)
         {
-            if (Session["UserId"] != null && ModelState.IsValid)
+            if (Session["AdminUserId"] != null && ModelState.IsValid)
             {
                 var existingQuestion = dbContext.Questions.Find(model.QuestionId);
                 if (existingQuestion != null)
@@ -247,7 +247,7 @@ namespace UI.Controllers
         [HttpPost]
         public ActionResult SaveAnswer(int questionId, string answer)
         {
-            if (Session["UserId"] != null)
+            if (Session["AdminUserId"] != null)
             {
                 var existingQuestion = dbContext.Questions.Find(questionId);
                 if (existingQuestion != null)

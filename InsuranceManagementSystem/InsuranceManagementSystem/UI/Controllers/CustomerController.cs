@@ -21,7 +21,7 @@ namespace UI.Controllers
             base.OnActionExecuting(filterContext);
 
             // Check if UserId is present in the session, otherwise redirect to login
-            if (Session["UserId"] == null)
+            if (Session["CustomerUserId"] == null)
             {
                 filterContext.Result = RedirectToAction("CustomerLogin", "Validation");
             }
@@ -31,11 +31,11 @@ namespace UI.Controllers
         {
             return View();  
         }
-        public ActionResult GetAllCustomers() 
-        {
-            var customer = dbContext.Customers.ToList();  
-            return View(customer);
-        }
+        //public ActionResult GetAllCustomers() 
+        //{
+        //    var customer = dbContext.Customers.ToList();  
+        //    return View(customer);
+        //}
         
         public ActionResult GetAllUsers()    
         {
