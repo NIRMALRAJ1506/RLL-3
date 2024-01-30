@@ -113,6 +113,7 @@
     <Compile Include="Answer.cs" />
     <Compile Include="AppliedPolicy.cs" />
     <Compile Include="Category.cs" />
+    <Compile Include="CRUD\InsuranceDAL.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="Data\AdminRepository.cs" />
     <Compile Include="Data\CustomerRepository.cs" />

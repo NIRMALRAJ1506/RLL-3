@@ -11,6 +11,7 @@ namespace DAL
     {
         public InsuranceDbContext() : base("Insurance")
         {
+            Database.SetInitializer<InsuranceDbContext>(null);
             this.Configuration.ProxyCreationEnabled = false;
         }
 

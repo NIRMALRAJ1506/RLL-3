@@ -1,32 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Web.Http;
-using System.Web.Http.Description;
 using DAL;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
     public class AdminsController : ApiController
     {
-        private InsuranceDbContext db = new InsuranceDbContext();
+        private InsuranceService _insuranceService;
 
-        
-        public IQueryable<Admin> GetAdmins()
+        // Parameterless constructor for framework use
+        public AdminsController()
         {
-            return db.Admins;
+            // You can create a default instance or leave it empty based on your requirement
+            _insuranceService = new InsuranceService(new InsuranceDAL(new InsuranceDbContext()));
         }
 
-       
-        [ResponseType(typeof(Admin))]
+        // Constructor with parameter for dependency injection
+        public AdminsController(InsuranceService insuranceService)
+        {
+            _insuranceService = insuranceService;
+        }
+
+        // GET: api/Admins
+        public IEnumerable<Admin> GetAdmins()
+        {
+            return _insuranceService.GetAllAdmins();
+        }
+
+        // GET: api/Admins/5
         public IHttpActionResult GetAdmin(int id)
         {
-            Admin admin = db.Admins.Find(id);
+            Admin admin = _insuranceService.GetAdminById(id);
             if (admin == null)
             {
                 return NotFound();
@@ -35,8 +40,20 @@ namespace WebAPI.Controllers
             return Ok(admin);
         }
 
-        
-        [ResponseType(typeof(void))]
+        // POST: api/Admins
+        public IHttpActionResult PostAdmin(Admin admin)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _insuranceService.AddAdmin(admin);
+
+            return CreatedAtRoute("DefaultApi", new { id = admin.Id }, admin);
+        }
+
+        // PUT: api/Admins/5
         public IHttpActionResult PutAdmin(int id, Admin admin)
         {
             if (!ModelState.IsValid)
@@ -49,70 +66,23 @@ namespace WebAPI.Controllers
                 return BadRequest();
             }
 
-            db.Entry(admin).State = EntityState.Modified;
+            _insuranceService.UpdateAdmin(admin);
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AdminExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return StatusCode(System.Net.HttpStatusCode.NoContent);
         }
 
-       
-        [ResponseType(typeof(Admin))]
-        public IHttpActionResult PostAdmin(Admin admin)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            db.Admins.Add(admin);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = admin.Id }, admin);
-        }
-
-        
-        [ResponseType(typeof(Admin))]
+        // DELETE: api/Admins/5
         public IHttpActionResult DeleteAdmin(int id)
         {
-            Admin admin = db.Admins.Find(id);
+            Admin admin = _insuranceService.GetAdminById(id);
             if (admin == null)
             {
                 return NotFound();
             }
 
-            db.Admins.Remove(admin);
-            db.SaveChanges();
+            _insuranceService.DeleteAdmin(id);
 
             return Ok(admin);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        private bool AdminExists(int id)
-        {
-            return db.Admins.Count(e => e.Id == id) > 0;
         }
     }
 }
