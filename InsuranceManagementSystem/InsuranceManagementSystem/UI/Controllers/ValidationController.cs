@@ -43,66 +43,66 @@ namespace UILayer.Controllers
             return View(user);
         }
 
-        [HttpPost]
-        public ActionResult Registration(UserView user, string captchaInput)
-        {
-            // Validate captcha
-            if (!ValidateCaptcha(captchaInput))
-            {
-                ModelState.AddModelError("Captcha", "Captcha verification failed.");
-                return View("Registration", user);
-            }
+        //[HttpPost]
+        //public ActionResult Registration(UserView user, string captchaInput)
+        //{
+        //    // Validate captcha
+        //    if (!ValidateCaptcha(captchaInput))
+        //    {
+        //        ModelState.AddModelError("Captcha", "Captcha verification failed.");
+        //        return View("Registration", user);
+        //    }
 
-            // Check if email or username already registered
-            if (adminRepository.AdminExistsEmail(user.Email) || customerRepository.CustomerExistsEmail(user.Email))
-            {
-                ModelState.AddModelError("Email", "Email already registered with us.");
-                return View("Registration", user);
-            }
-            else if (adminRepository.AdminExists(user.UserName) || customerRepository.CustomerExists(user.UserName))
-            {
-                ModelState.AddModelError("UserName", "Username already registered with us.");
-                return View("Registration", user);
-            }
+        //    // Check if email or username already registered
+        //    if (adminRepository.AdminExistsEmail(user.Email) || customerRepository.CustomerExistsEmail(user.Email))
+        //    {
+        //        ModelState.AddModelError("Email", "Email already registered with us.");
+        //        return View("Registration", user);
+        //    }
+        //    else if (adminRepository.AdminExists(user.UserName) || customerRepository.CustomerExists(user.UserName))
+        //    {
+        //        ModelState.AddModelError("UserName", "Username already registered with us.");
+        //        return View("Registration", user);
+        //    }
 
-            // Registration logic
-            if (user.UserType == 2)
-            {
-                // Customer registration
-                Customer customer = new Customer
-                {
-                    Email = user.Email,
-                    UserName = user.UserName,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    PhoneNumber = user.PhoneNumber,
-                    RoleId = user.UserType,
-                    Password = user.Password,
-                };
+        //    // Registration logic
+        //    if ()
+        //    {
+        //        // Customer registration
+        //        Customer customer = new Customer
+        //        {
+        //            Email = user.Email,
+        //            UserName = user.UserName,
+        //            FirstName = user.FirstName,
+        //            LastName = user.LastName,
+        //            PhoneNumber = user.PhoneNumber,
+        //            RoleId = user.UserType,
+        //            Password = user.Password,
+        //        };
 
-                customerRepository.CreateCustomer(customer);
+        //        customerRepository.CreateCustomer(customer);
 
-                return RedirectToAction("CustomerLogin", "Validation");
-            }
-            else
-            {
-                // Admin registration
-                Admin newadmin = new Admin
-                {
-                    Email = user.Email,
-                    UserName = user.UserName,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    PhoneNumber = user.PhoneNumber,
-                    RoleId = user.UserType,
-                    Password = user.Password,
-                };
+        //        return RedirectToAction("CustomerLogin", "Validation");
+        //    }
+        //    //else
+        //    //{
+        //    //    // Admin registration
+        //    //    Admin newadmin = new Admin
+        //    //    {
+        //    //        Email = user.Email,
+        //    //        UserName = user.UserName,
+        //    //        FirstName = user.FirstName,
+        //    //        LastName = user.LastName,
+        //    //        PhoneNumber = user.PhoneNumber,
+        //    //        RoleId = user.UserType,
+        //    //        Password = user.Password,
+        //    //    };
 
-                adminRepository.CreateAdmin(newadmin);
+        //    //    adminRepository.CreateAdmin(newadmin);
 
-                return RedirectToAction("Index", "Admin");
-            }
-        }
+        //    //    return RedirectToAction("Dashboard", "Admin");
+        //    //}
+        //}
 
         public ActionResult GenerateCaptchaImage()
         {
